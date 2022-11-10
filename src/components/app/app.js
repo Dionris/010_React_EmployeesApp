@@ -69,32 +69,34 @@ class App extends Component {
         });
     }
 
+    //no optimization
+
+    /*
+
     onToggleIncrease = (id) => {
 
         //001 - dolgii
 
-        /*
-        this.setState(({data}) => {
+        
+        // this.setState(({data}) => {
            
 
 
 
-            const index = data.findIndex(elem => elem.id === id);
+        //     const index = data.findIndex(elem => elem.id === id);
 
-            const old = data(index);
-            const newItem = {...old, increase: !old.increase};
-            const newArr = [...data.slice(0, index), newItem, ...data.slice(index + 1)];
+        //     const old = data(index);
+        //     const newItem = {...old, increase: !old.increase};
+        //     const newArr = [...data.slice(0, index), newItem, ...data.slice(index + 1)];
 
-            return {
-                data:newArr
-            }
+        //     return {
+        //         data:newArr
+        //     }
 
            
-        })
+        // })
 
-        */
-
-
+        
         //002 - bistrii
 
         this.setState(({data}) => ({
@@ -115,7 +117,23 @@ class App extends Component {
                 }
                 return item;
             })
-        }))    }
+        }))    
+    }
+    */
+
+
+    //optimization
+
+    onToggleProp = (id, prop) => {
+        this.setState(({data}) => ({
+            data: data.map(item => {
+                if (item.id === id) {
+                    return {...item, [prop]: !item[prop]}
+                }
+                return item;
+            })
+        }))    
+    }
 
     render() {
         const employees = this.state.data.length;
@@ -133,13 +151,21 @@ class App extends Component {
                 <EmployeesList 
                 data={this.state.data}
                 onDelete={this.deleteItem}
+
+                //no optimization
+
+                /*
                 onToggleIncrease={this.onToggleIncrease}
-                onToggleRise={this.onToggleRise}/>
+                onToggleRise={this.onToggleRise}
+                */
+
+                onToggleProp={this.onToggleProp}
+                />
                 <EmployeesAddForm  onAdd={this.addItem}/>
             </div>
         );
     }
-}
+}   
 
 /* 
 CATALOG CARDS MARKETPLACE

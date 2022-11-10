@@ -1,4 +1,7 @@
 
+import { Component } from 'react';
+
+
 import AppInfo from '../app-info/app-info';
 import SearchPanel from '../search-panel/search-panel';
 import AppFilter from '../app-filter/app-filter';
@@ -7,28 +10,135 @@ import EmployeesAddForm from '../employees-add-form/employees-add-form';
 
 import './app.css';
 
-function App() {
+class App extends Component {
 
-    const data = [
-        {name: 'Vlad', salary: 1800, increase: false, id: 1},
-        {name: 'Danik', salary: 13000, increase: true, id: 2},
-        {name: 'Dima', salary: 15000, increase: false, id: 3},
+    constructor(props) {
+        super(props);
+        this.state = {
+            data: [
+                {name: 'Vlad', salary: 1800, increase: false, rise: true, id: 1},
+                {name: 'Danik', salary: 1300, increase: true, rise: false, id: 2},
+                {name: 'Dima', salary: 1500, increase: false, rise: false, id: 3},
+        
+            ]
+        }
+        this.maxId = 4;
 
-    ];
+    }
+ 
+    deleteItem = (id) => {
+        this.setState(({data}) => {
 
-    return (
-        <div className="app">
-            <AppInfo />
+            //001 - sposob 1 (dolgii)
 
-            <div className="search-panel">
-                <SearchPanel/>
-                <AppFilter/>
+            /* 
+            const index = data.findIndex(elem => elem.id === id);            
+
+            const before = data.slice(0, index);
+            const after = data.slice(index + 1);
+
+            const newArr = [...before, ...after];
+            */
+
+            return {
+                // 001 - sposob 1 (dolgii)
+                /*
+                data: newArr
+                */
+
+                // 002 - sposob 2 (bistrii)
+                data: data.filter(item => item.id !== id)
+
+            }
+        })    
+    }
+
+    addItem = (name, salary) => {
+        const newItem = {
+            name, 
+            salary,
+            increase: false,
+            rise: false,
+            id: this.maxId++
+        }
+        this.setState(({data}) => {
+            const newArr = [...data, newItem];
+            return {
+                data: newArr
+            }
+        });
+    }
+
+    onToggleIncrease = (id) => {
+
+        //001 - dolgii
+
+        /*
+        this.setState(({data}) => {
+           
+
+
+
+            const index = data.findIndex(elem => elem.id === id);
+
+            const old = data(index);
+            const newItem = {...old, increase: !old.increase};
+            const newArr = [...data.slice(0, index), newItem, ...data.slice(index + 1)];
+
+            return {
+                data:newArr
+            }
+
+           
+        })
+
+        */
+
+
+        //002 - bistrii
+
+        this.setState(({data}) => ({
+            data: data.map(item => {
+                if (item.id === id) {
+                    return {...item, increase: !item.increase}
+                }
+                return item;
+            })
+        }))
+    }
+
+    onToggleRise = (id) => {
+        this.setState(({data}) => ({
+            data: data.map(item => {
+                if (item.id === id) {
+                    return {...item, rise: !item.rise}
+                }
+                return item;
+            })
+        }))    }
+
+    render() {
+        const employees = this.state.data.length;
+        const increased = this.state.data.filter(item => item.increase).length;
+        return (
+            <div className="app">
+                <AppInfo employees={employees} 
+                         increased={increased}/>
+
+                <div className="search-panel">
+                    <SearchPanel/>
+                    <AppFilter/>
+                </div>
+                    
+                <EmployeesList 
+                data={this.state.data}
+                onDelete={this.deleteItem}
+                onToggleIncrease={this.onToggleIncrease}
+                onToggleRise={this.onToggleRise}/>
+                <EmployeesAddForm  onAdd={this.addItem}/>
             </div>
-                
-            <EmployeesList data={data}/>
-            <EmployeesAddForm/>
-        </div>
-    );
+        );
+    }
 }
 
 /* 
